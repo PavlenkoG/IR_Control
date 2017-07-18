@@ -41,6 +41,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim21;
+extern uint32_t DataTransfer;
 /******************************************************************************/
 /*            Cortex-M0+ Processor Interruption and Exception Handlers         */
 /******************************************************************************/
@@ -69,8 +70,10 @@ void SysTick_Handler(void) {
 /* USER CODE BEGIN 1 */
 
 void TIM21_IRQHandler(void) {
-    //HAL_NVIC_ClearPendingIRQ(TIM21_IRQn);
+//    HAL_TIM_OC_Stop_IT(&htim21,TIM_CHANNEL_1);
     HAL_TIM_IRQHandler(&htim21);
+
+    DataTransfer --;
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
