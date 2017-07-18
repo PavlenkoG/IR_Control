@@ -78,13 +78,13 @@ int main(void) {
 
     uint32_t *pData, Data;
     IR_PacketTypeDef PacketIr;
-    uint32_t PacketLen = COMMAND_LENGTH + ADDR_LENGTH;
+    uint32_t PacketLen = COMMAND_LENGTH + ADDR_LENGTH - 1;
     int i = 0;
 
     IR_PacketTypeDef IR_Commands []=
-        { {0,DEVICE_ADDRESS},           // Digit key 0
-          {1,DEVICE_ADDRESS},           // Digit key 1
-          {2,DEVICE_ADDRESS}           // Digit key 2
+        { {0x2D,DEVICE_ADDRESS},           // Digit key 0
+          {0x37,DEVICE_ADDRESS},           // Digit key 1
+          {0x48,DEVICE_ADDRESS}           // Digit key 2
         };
     /* USER CODE END 1 */
 
@@ -130,7 +130,7 @@ int main(void) {
         else {
             i = 0;
         }
-        Data =(uint32_t ) CreasteIrPacket(IR_Commands[i]);
+        Data =(uint32_t ) CreasteIrPacket(IR_Commands[0]);
         pData = &Data;
         SendIrData(pData, PacketLen);
         /* USER CODE BEGIN 3 */
