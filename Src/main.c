@@ -123,7 +123,7 @@ int main(void) {
     while (1) {
         /* USER CODE END WHILE */
         HAL_Delay(1000);
-        HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+     // HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
         if (i < 2){
             i ++;
         }
@@ -200,7 +200,7 @@ static void MX_TIM2_Init(void) {
     htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
     htim2.Init.Period = 800;
     htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    htim2.Channel = HAL_TIM_ACTIVE_CHANNEL_1;
+    htim2.Channel = HAL_TIM_ACTIVE_CHANNEL_2;
     if (HAL_TIM_OC_Init(&htim2) != HAL_OK) {
         _Error_Handler(__FILE__, __LINE__);
     }
@@ -216,7 +216,7 @@ static void MX_TIM2_Init(void) {
     sConfigOC.Pulse = 200;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK) {
+    if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK) {
         _Error_Handler(__FILE__, __LINE__);
     }
 
@@ -308,9 +308,10 @@ static void MX_GPIO_Init(void) {
 
     /*Configure GPIO pin : LD3_Pin */
     GPIO_InitStruct.Pin = LD3_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;//GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF2_TIM2;
     HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
 
     /*

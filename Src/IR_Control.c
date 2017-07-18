@@ -45,13 +45,13 @@ int SendIrSymbol (IR_SymbolTypeDef Symbol)
         break;
     }
 
-    HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2);
     HAL_TIM_OC_Start_IT(&htim21, TIM_CHANNEL_1);
     // wait for end transfer of symbol
     while (DataTransfer){
 
     }
-    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_2);
 
     // start transfer separate symbol
     DataTransfer = PAUSE_LEVEL_INTERVAL_NUM;
@@ -59,7 +59,7 @@ int SendIrSymbol (IR_SymbolTypeDef Symbol)
     while (DataTransfer){
 
     }
-    HAL_TIM_OC_Stop(&htim21, TIM_CHANNEL_1);
+    HAL_TIM_OC_Stop(&htim21, TIM_CHANNEL_2);
     return 0;
 }
 
