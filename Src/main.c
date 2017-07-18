@@ -39,6 +39,7 @@
 #include "main.h"
 #include "stm32l0xx_it.h"
 #include "stm32l0xx_hal.h"
+#include "IR_control.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -47,6 +48,8 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim21;
+
+uint32_t DataTransfer;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -73,6 +76,16 @@ int main(void) {
 
     /* USER CODE BEGIN 1 */
 
+    uint32_t *pData, Data;
+    IR_PacketTypeDef PacketIr;
+    uint32_t PacketLen = COMMAND_LENGTH + ADDR_LENGTH;
+    int i = 0;
+
+    IR_PacketTypeDef IR_Commands []=
+        { {0,DEVICE_ADDRESS},           // Digit key 0
+          {1,DEVICE_ADDRESS},           // Digit key 1
+          {2,DEVICE_ADDRESS}           // Digit key 2
+        };
     /* USER CODE END 1 */
 
     /* MCU Configuration----------------------------------------------------------*/
@@ -102,17 +115,24 @@ int main(void) {
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-    HAL_TIM_OC_Start_IT(&htim21, TIM_CHANNEL_1);
+
+
     HAL_NVIC_SetPriority(TIM21_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM21_IRQn);
+
     while (1) {
         /* USER CODE END WHILE */
+        HAL_Delay(1000);
         HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-        HAL_Delay(1000);
-        HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
-        HAL_Delay(1000);
-        HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_1);
-
+        if (i < 2){
+            i ++;
+        }
+        else {
+            i = 0;
+        }
+        Data =(uint32_t ) CreasteIrPacket(IR_Commands[i]);
+        pData = &Data;
+        SendIrData(pData, PacketLen);
         /* USER CODE BEGIN 3 */
 
     }
@@ -147,7 +167,7 @@ void SystemClock_Config(void) {
     /**Initializes the CPU, AHB and APB busses clocks 
      */
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-            | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+                                | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -178,7 +198,7 @@ static void MX_TIM2_Init(void) {
     htim2.Instance = TIM2;
     htim2.Init.Prescaler = 0;
     htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim2.Init.Period = 400;
+    htim2.Init.Period = 800;
     htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim2.Channel = HAL_TIM_ACTIVE_CHANNEL_1;
     if (HAL_TIM_OC_Init(&htim2) != HAL_OK) {
@@ -192,8 +212,8 @@ static void MX_TIM2_Init(void) {
         _Error_Handler(__FILE__, __LINE__);
     }
 
-    sConfigOC.OCMode = TIM_OCMODE_TOGGLE;
-    sConfigOC.Pulse = 0;
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = 200;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK) {
@@ -201,7 +221,7 @@ static void MX_TIM2_Init(void) {
     }
 
     HAL_TIM_MspPostInit(&htim2);
-    HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_1);
+//    HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_1);
 
 }
 
@@ -217,7 +237,7 @@ static void MX_TIM21_Init(void) {
     htim21.Instance = TIM21;
     htim21.Init.Prescaler = 0;
     htim21.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim21.Init.Period = 19200;
+    htim21.Init.Period = SPACE_INTERVAL_US;
     htim21.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     if (HAL_TIM_Base_Init(&htim21) != HAL_OK) {
         _Error_Handler(__FILE__, __LINE__);
