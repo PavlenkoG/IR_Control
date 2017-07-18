@@ -25,9 +25,9 @@
 #define END_TIME_CORRECTION_US      10
 
 #define COMMAND_LENGTH              7
-#define ADDR_LENGTH                 5
+#define ADDR_LENGTH                 13
 
-#define DEVICE_ADDRESS              1
+#define DEVICE_ADDRESS              0x1E3A
 
 typedef struct {
     uint32_t SendIrCommand;
