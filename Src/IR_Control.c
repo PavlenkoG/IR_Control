@@ -66,8 +66,8 @@ int SendIrSymbol (IR_SymbolTypeDef Symbol)
 uint32_t CreasteIrPacket (IR_PacketTypeDef IR_Packet)
 {
     uint32_t Packet = 0;
-    Packet = IR_Packet.SendIrAddr;
-    Packet = Packet | (IR_Packet.SendIrCommand << ADDR_LENGTH);
+    Packet = IR_Packet.SendIrCommand;
+    Packet = Packet | (IR_Packet.SendIrAddr << COMMAND_LENGTH);
     return Packet;
 }
 
